@@ -9,7 +9,12 @@ import type {
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 const API_BASE_PATH = import.meta.env.VITE_API_BASE_PATH || '/api'
-const BASE_URL = API_URL ? `${API_URL}${API_BASE_PATH}` : API_BASE_PATH
+
+// Ensure API_URL doesn't end with a slash if we're prepending it to a base path that starts with one
+const normalizedApiUrl = API_URL.replace(/\/$/, '')
+const normalizedBasePath = API_BASE_PATH.startsWith('/') ? API_BASE_PATH : `/${API_BASE_PATH}`
+
+const BASE_URL = normalizedApiUrl ? `${normalizedApiUrl}${normalizedBasePath}` : normalizedBasePath
 
 async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${BASE_URL}${endpoint}`
